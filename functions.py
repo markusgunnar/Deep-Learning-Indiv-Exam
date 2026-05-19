@@ -68,7 +68,7 @@ def count_files(_path: str) -> int:
     return count
 
 
-def show_n_images(_img_dataset, _class_names: list, _nr: int):
+def plot_n_images(_img_dataset, _class_names: list, _nr: int):
     plt.figure(figsize=(12,5))
 
     for images, labels in _img_dataset.take(1):
@@ -80,4 +80,27 @@ def show_n_images(_img_dataset, _class_names: list, _nr: int):
             plt.axis("off")
 
     plt.tight_layout()
+    plt.show()
+
+
+def plot_history_data(_history: dict, _title="Model name"):
+    plt.figure(figsize=(9, 5))
+
+    x = range(1, len(_history["accuracy"]) + 1, 1)
+
+    plt.subplot(1, 2, 1)
+    plt.plot(x, _history["accuracy"], label="Accuracy")
+    plt.plot(x, _history["val_accuracy"], label="Validation Accuracy")
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(x, _history["loss"], label="Loss")
+    plt.plot(x, _history["val_loss"], label="Validation Loss")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.legend()
+
+    plt.title(_title)
     plt.show()

@@ -1,4 +1,5 @@
 .gitignore
 .venv
+.report
 Data/
 __pycache__
