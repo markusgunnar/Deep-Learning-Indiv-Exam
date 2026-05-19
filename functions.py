@@ -1,7 +1,13 @@
-import pandas as pd, matplotlib.pyplot as plt
+import os, numpy as np, pandas as pd, matplotlib.pyplot as plt
 from pathlib import Path
-import os
+
+from sklearn.model_selection import train_test_split
+
 import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+tf.keras.utils.set_random_seed(42)
 
 
 def load_images_from_dir(_path: str, _img_size: tuple, _subset: str):
@@ -104,3 +110,26 @@ def plot_history_data(_history: dict, _title="Model name"):
 
     plt.title(_title)
     plt.show()
+
+
+def create_model(_layers: list, _learning_rate=0.001):
+    model = keras.Sequential(_layers)
+
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=_learning_rate),
+        loss=keras.losses.SparseCategoricalCrossentropy(),
+        metrics=["accuracy"]
+    )
+
+    return model
+
+
+def train_model(_model, _train, _val, _epochs=20, _callbacks=None):
+    history = _model.fit(
+        _train,
+        validation_data=_val,
+        epochs=_epochs,
+        callbacks=_callbacks
+    )
+
+    return _model, history
