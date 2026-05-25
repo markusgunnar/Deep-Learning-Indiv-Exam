@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
+from tensorflow.keras import layers, regularizers
 
 tf.keras.utils.set_random_seed(42)
 
@@ -95,14 +95,14 @@ def plot_history_data(_history: dict, _title="Model name"):
     x = range(1, len(_history["accuracy"]) + 1, 1)
 
     plt.subplot(1, 2, 1)
-    plt.plot(x, _history["accuracy"], label="Accuracy")
+    plt.plot(x, _history["accuracy"], label="Training Accuracy")
     plt.plot(x, _history["val_accuracy"], label="Validation Accuracy")
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
     plt.legend()
 
     plt.subplot(1, 2, 2)
-    plt.plot(x, _history["loss"], label="Loss")
+    plt.plot(x, _history["loss"], label="Training Loss")
     plt.plot(x, _history["val_loss"], label="Validation Loss")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
@@ -132,4 +132,27 @@ def train_model(_model, _train, _val, _epochs=20, _callbacks=None):
         callbacks=_callbacks
     )
 
-    return _model, history
+    return history
+
+
+def save_model_info(_models, _histories, _results, _model, _history, _name):
+        # Save models
+        _models.append(_model)
+
+        # Save histories
+        _histories.append(_history)
+
+        # Save results
+        best_val_acc = max(_history.history["val_accuracy"])
+        best_val_loss = min(_history.history["val_loss"])
+
+        best_epoch = _history.history["val_accuracy"].index(best_val_acc)
+
+        _results.append({
+            "model name": _name,
+            "train acc at best epoch": _history.history["accuracy"][best_epoch],
+            "best val acc": best_val_acc,
+            "best val loss": best_val_loss,
+            "gap": _history.history["accuracy"][best_epoch] - best_val_acc,
+            "best epoch": best_epoch,
+        })
